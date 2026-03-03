@@ -1,0 +1,24 @@
+# ─── VS Code ───────────────────────────────────────
+.vscode/
+
+# ─── Compiled Binaries ─────────────────────────────
+*.exe
+*.out
+*.o
+*.obj
+game_of_life
+
+# ─── Build / Cache Directories ─────────────────────
+build/
+dist/
+*.cache
+
+# ─── OS Files ──────────────────────────────────────
+.DS_Store          # macOS
+Thumbs.db          # Windows
+desktop.ini        # Windows
+
+# ─── Logs & Temp ───────────────────────────────────
+*.log
+*.tmp
+*.temp

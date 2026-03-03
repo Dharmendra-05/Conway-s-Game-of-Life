@@ -22,11 +22,18 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <thread>
-#include <chrono>
+#ifdef _WIN32
+  #include <windows.h>
+  #define SLEEP_MS(ms) Sleep(ms)
+#else
+  #include <thread>
+  #include <chrono>
+  #define SLEEP_MS(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms))
+#endif
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <thread>
 
 // ─── Config ───────────────────────────────────────────────────
 constexpr int  WIDTH       = 60;
@@ -63,9 +70,9 @@ void seed_random(Grid& g, double density = 0.30) {
 // Place a pattern at (row, col) from a list of {dr, dc} offsets
 void place_pattern(Grid& g, int row, int col,
                    const std::vector<std::pair<int,int>>& cells) {
-    for (auto [dr, dc] : cells) {
-        int r = (row + dr + HEIGHT) % HEIGHT;
-        int c = (col + dc + WIDTH)  % WIDTH;
+    for (size_t i = 0; i < cells.size(); ++i) {
+        int r = (row + cells[i].first  + HEIGHT) % HEIGHT;
+        int c = (col + cells[i].second + WIDTH)  % WIDTH;
         g[r][c] = 1;
     }
 }
@@ -183,7 +190,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Seeding: Random (30% density)\n";
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    SLEEP_MS(500);
 
     for (int gen = 0; gen <= MAX_GENS; ++gen) {
         int alive = count_alive(grid);
@@ -197,7 +204,7 @@ int main(int argc, char* argv[]) {
         }
 
         grid = next_generation(grid);
-        std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_MS));
+        SLEEP_MS(DELAY_MS);
     }
 
     std::cout << "\n  Simulation complete.\n";
